@@ -18,8 +18,11 @@
 
   # https://devenv.sh/languages/
   # languages.rust.enable = true;
-  languages.go.enable = true;
-
+  languages = {
+    go.enable = true;
+    javascript.enable = true;
+    typescript.enable = true;
+  };
   # https://devenv.sh/processes/
   processes.cargo-watch.exec = "cargo-watch";
 

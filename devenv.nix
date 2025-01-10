@@ -14,6 +14,7 @@
   packages = [
     pkgs.git
     pkgs.bun
+    pkgs.tailwindcss-language-server
   ];
 
   # https://devenv.sh/languages/

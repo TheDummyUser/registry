@@ -32,13 +32,16 @@
   services.mysql = {
     enable = true;
     initialDatabases = [
-      { name = "registerdb"; }
+      {
+        name = "justadb";
+        schema = ./server/db/schema.sql;
+      }
     ];
     ensureUsers = [
       {
         name = "root";
         ensurePermissions = {
-          "registerdb.*" = "ALL PRIVILEGES";
+          "justadb.*" = "ALL PRIVILEGES";
         };
       }
       {

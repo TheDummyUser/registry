@@ -27,6 +27,39 @@
   # https://devenv.sh/processes/
   processes.cargo-watch.exec = "cargo-watch";
 
+  android = {
+    enable = true;
+    reactNative.enable = true;
+    platforms.version = [ "35" ];
+    systemImageTypes = [ "google_apis_playstore" ];
+    abis = [
+      "arm64-v8a"
+      "x86_64"
+    ];
+    platformTools.version = "35.0.2";
+    buildTools.version = [ "35.0.0" ];
+    emulator = {
+      enable = true;
+      version = "35.2.5";
+    };
+    sources.enable = false;
+    systemImages.enable = true;
+    ndk.enable = true;
+    googleAPIs.enable = true;
+    googleTVAddOns.enable = true;
+    extras = [ "extras;google;gcm" ];
+    extraLicenses = [
+      "android-sdk-preview-license"
+      "android-googletv-license"
+      "android-sdk-arm-dbt-license"
+      "google-gdk-license"
+      "intel-android-extra-license"
+      "intel-android-sysimage-license"
+      "mips-android-sysimage-license"
+    ];
+    # android-studio = pkgs.android-studio;
+  };
+
   # https://devenv.sh/services/
   # services.postgres.enable = true;
   services.mysql = {

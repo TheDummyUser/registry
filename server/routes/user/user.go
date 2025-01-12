@@ -11,10 +11,14 @@ import (
 
 func SetUpRoutes(app *fiber.App, db *sql.DB) {
 	app.Post("/register", func(c *fiber.Ctx) error {
+		c.Set("content-type", "application/json")
 		return SignUp(c, db)
 	})
 	app.Post("/login", func(c *fiber.Ctx) error {
 		return Login(c, db)
+	})
+	app.Post("/promote-admin", func(c *fiber.Ctx) error {
+		return PromoteToAdmin(c, db)
 	})
 }
 
@@ -34,7 +38,7 @@ func SignUp(c *fiber.Ctx, db *sql.DB) error {
 		if err != sql.ErrNoRows {
 			log.Printf("Database error checking username: %v", err)
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error":  "Internal server error",
+				"error":  err,
 				"status": fiber.StatusInternalServerError,
 			})
 		}
@@ -84,8 +88,8 @@ func Login(c *fiber.Ctx, db *sql.DB) error {
 
 	// Query database for username and password
 	var existingUser models.Existinguser
-	err := db.QueryRow("SELECT username, password FROM users WHERE username = ?", user.Username).
-		Scan(&existingUser.Username, &existingUser.Password)
+	err := db.QueryRow("SELECT username, password, email FROM users WHERE username = ?", user.Username).
+		Scan(&existingUser.Username, &existingUser.Password, &existingUser.Email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// Username not found
@@ -114,5 +118,9 @@ func Login(c *fiber.Ctx, db *sql.DB) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Login successful",
 		"status":  fiber.StatusOK,
+		"details": fiber.Map{
+			"email":    existingUser.Email,
+			"username": existingUser.Username,
+		},
 	})
 }

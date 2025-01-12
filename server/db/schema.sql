@@ -1,0 +1,23 @@
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    username VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    is_admin BOOLEAN DEFAULT FALSE NOT NULL
+);
+
+
+CREATE TABLE admins (
+    admin_id INT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE user_timers (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
+    start_time TIMESTAMP,
+    is_running BOOLEAN DEFAULT FALSE
+);

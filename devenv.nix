@@ -1,8 +1,5 @@
 {
   pkgs,
-  lib,
-  config,
-  inputs,
   ...
 }:
 
@@ -11,10 +8,11 @@
   env.GREET = "devenv";
 
   # https://devenv.sh/packages/
-  packages = [
-    pkgs.git
-    pkgs.bun
-    pkgs.tailwindcss-language-server
+  packages = with pkgs; [
+    git
+    bun
+    nodejs
+    yarn
   ];
 
   # https://devenv.sh/languages/
@@ -37,7 +35,10 @@
       "x86_64"
     ];
     platformTools.version = "35.0.2";
-    buildTools.version = [ "35.0.0" ];
+    buildTools.version = [
+      "34.0.0"
+      "35.0.0"
+    ];
     emulator = {
       enable = true;
       version = "35.2.5";

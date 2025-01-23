@@ -1,3 +1,6 @@
+import { useColorScheme } from 'react-native';
+import useThemeStore from '~/store/themeStore';
+
 export const DarkTheme = {
   base00: '#0F1419',
   base01: '#131721',
@@ -34,4 +37,11 @@ export const LightTheme = {
   base0D: '#36A3D9',
   base0E: '#A37ACC',
   base0F: '#E6BA7E',
+};
+
+export const Theme = () => {
+  const { theme, toggleTheme } = useThemeStore();
+  const colorScheme = theme == 'dark' ? DarkTheme : LightTheme;
+
+  return colorScheme;
 };

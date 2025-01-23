@@ -9,7 +9,24 @@
     "experiments": {
       "tsconfigPaths": true
     },
-    "plugins": [],
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/PixelifySans-Bold.ttf",
+            "./assets/fonts/PixelifySans-Regular.ttf",
+            "./assets/fonts/PixelifySans-Medium.ttf",
+            "./assets/fonts/PixelifySans-SemiBold.ttf",
+            "./assets/fonts/RobotoCondensed-Regular.ttf",
+            "./assets/fonts/RobotoCondensed-Medium.ttf",
+            "./assets/fonts/RobotoCondensed-Bold.ttf",
+            "./assets/fonts/RobotoCondensed-SemiBold.ttf",
+            "./assets/fonts/RobotoCondensed-Italic.ttf"
+          ]
+        }
+      ]
+    ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",

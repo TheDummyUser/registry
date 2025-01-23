@@ -1,25 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import MainContainer from '~/components/Container';
+import { fonts } from '~/utils/fonts';
+import { styles } from './styles';
 
 const Home = () => {
   return (
-    <View style={styles.container}>
+    <MainContainer ph={10}>
       <Text style={styles.textStyle}>Home</Text>
-    </View>
+    </MainContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'red', // Optional, just to make sure it's visible
-  },
-  textStyle: {
-    color: 'black',
-    fontSize: 20,
-  },
-});
 
 export default Home;

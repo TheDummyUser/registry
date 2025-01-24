@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 
 interface customButtonProps {
   text: string;
@@ -7,7 +7,7 @@ interface customButtonProps {
   textColor: string;
   bgColor: string;
   disabled: boolean;
-  width: number;
+  width: string | number;
   height: number;
   fontsize: number;
   fontFam: string;

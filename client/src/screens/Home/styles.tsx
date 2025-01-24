@@ -3,7 +3,7 @@ import { fonts } from '~/utils/fonts';
 
 export const styles = StyleSheet.create({
   textStyle: {
-    color: 'black',
+    color: 'white',
     fontSize: 23,
     fontFamily: fonts.pixeSansBold,
   },

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
 import React, { ReactNode } from 'react';
 import { Theme } from '~/utils/colors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';

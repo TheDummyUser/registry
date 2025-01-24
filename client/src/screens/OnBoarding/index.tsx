@@ -1,64 +1,92 @@
 import React from 'react';
-import MainContainer from '~/components/Container';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
+import MainContainer from '~/components/Container';
 import { fonts } from '~/utils/fonts';
 import { Theme } from '~/utils/colors';
 import CustomButton from '~/components/CustomButton';
+import { Controller, useForm } from 'react-hook-form';
+import { validationRules } from '~/utils/validationSchema';
+
+type FormData = {
+  username: string;
+  password: string;
+};
 
 const OnBoarding = () => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<FormData>({
+    defaultValues: {
+      username: '',
+      password: '',
+    },
+    mode: 'onSubmit',
+  });
+
+  const onSubmit = (data: FormData) => console.log(data);
+
   const theme = Theme();
   return (
     <MainContainer ph={15} center={true}>
-      <View style={{ height: 100, borderWidth: 1, borderColor: 'red', justifyContent: 'center' }}>
+      <View style={styles.headerContainer}>
         <Text style={[styles.textStyle, { color: theme.base07 }]}>Registry</Text>
         <Text style={[styles.textStyle, { color: theme.base07, fontSize: 15 }]}>
-          A one place destinaton for Attendence
+          A one place destination for Attendance
         </Text>
       </View>
-      <View
-        style={{
-          height: 200,
-          borderWidth: 1,
-          borderColor: 'green',
-          justifyContent: 'space-evenly',
-        }}>
-        <TextInput
-          placeholder="Email@example.com"
-          placeholderTextColor={theme.base05}
-          style={{
-            backgroundColor: theme.base02,
-            height: 40,
-            borderRadius: 12,
-            paddingHorizontal: 10,
-            fontStyle: 'normal',
-            fontFamily: fonts.Rcr,
-            fontSize: 13,
-          }}
-        />
 
-        <TextInput
-          placeholder="Password..."
-          placeholderTextColor={theme.base05}
-          style={{
-            backgroundColor: theme.base02,
-            height: 40,
-            borderRadius: 12,
-            paddingHorizontal: 10,
-            fontStyle: 'normal',
-            fontFamily: fonts.Rcr,
-            fontSize: 13,
-          }}
+      <View style={styles.formContainer}>
+        <Controller
+          control={control}
+          name="username"
+          rules={validationRules.username}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Email@example.com"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              placeholderTextColor={theme.base05}
+              style={[styles.input, { backgroundColor: theme.base03 }]}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              accessibilityLabel="Email Input"
+            />
+          )}
         />
+        {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
+
+        <Controller
+          control={control}
+          name="password"
+          rules={validationRules.password}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Password..."
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              placeholderTextColor={theme.base05}
+              style={[styles.input, { backgroundColor: theme.base03 }]}
+              secureTextEntry
+              accessibilityLabel="Password Input"
+            />
+          )}
+        />
+        {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
+
         <CustomButton
-          text="login"
-          disabled={false}
+          text="Login"
+          disabled={!isValid}
           bgColor={theme.base03}
-          width={'100%'}
+          width="100%"
           height={40}
           fontsize={12}
           fontFam={fonts.pixeSansRegular}
           textColor={theme.base06}
-          onPress={() => {}}
+          onPress={handleSubmit(onSubmit)}
         />
       </View>
     </MainContainer>
@@ -66,9 +94,31 @@ const OnBoarding = () => {
 };
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    height: 100,
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
   textStyle: {
     fontSize: 22,
     fontFamily: fonts.pixeSansBold,
+  },
+  formContainer: {
+    height: 200,
+    justifyContent: 'space-evenly',
+  },
+  input: {
+    height: 40,
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    fontFamily: fonts.Rcr,
+    fontSize: 13,
+    marginBottom: 10,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginBottom: 10,
   },
 });
 

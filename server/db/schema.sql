@@ -7,17 +7,12 @@ CREATE TABLE users (
     is_admin BOOLEAN DEFAULT FALSE NOT NULL
 );
 
-
-CREATE TABLE admins (
-    admin_id INT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-
 CREATE TABLE user_timers (
-    id SERIAL PRIMARY KEY,
-    user_id VARCHAR(255) NOT NULL,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    date DATE NOT NULL,
     start_time TIMESTAMP,
-    is_running BOOLEAN DEFAULT FALSE
+    end_time TIMESTAMP,
+    is_running BOOLEAN DEFAULT FALSE NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

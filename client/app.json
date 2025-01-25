@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "client",
-    "slug": "client",
+    "name": "registry",
+    "slug": "registry",
     "version": "1.0.0",
     "web": {
       "favicon": "./assets/favicon.png"
@@ -15,14 +15,13 @@
         {
           "fonts": [
             "./assets/fonts/PixelifySans-Bold.ttf",
-            "./assets/fonts/PixelifySans-Regular.ttf",
-            "./assets/fonts/PixelifySans-Medium.ttf",
             "./assets/fonts/PixelifySans-SemiBold.ttf",
-            "./assets/fonts/RobotoCondensed-Regular.ttf",
-            "./assets/fonts/RobotoCondensed-Medium.ttf",
-            "./assets/fonts/RobotoCondensed-Bold.ttf",
-            "./assets/fonts/RobotoCondensed-SemiBold.ttf",
-            "./assets/fonts/RobotoCondensed-Italic.ttf"
+            "./assets/fonts/PixelifySans-Medium.ttf",
+            "./assets/fonts/PixelifySans-Regular.ttf",
+            "./assets/fonts/Poppins-Bold.ttf",
+            "./assets/fonts/Poppins-SemiBold.ttf",
+            "./assets/fonts/Poppins-Medium.ttf",
+            "./assets/fonts/Poppins-Regular.ttf"
           ]
         }
       ]
@@ -38,14 +37,14 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.client"
+      "bundleIdentifier": "thedummyuser.registry.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.client"
+      "package": "thedummyuser.registry.app"
     }
   }
 }

@@ -67,7 +67,7 @@
     enable = true;
     initialDatabases = [
       {
-        name = "justadb";
+        name = "testdb";
         schema = ./server/db/schema.sql;
       }
     ];

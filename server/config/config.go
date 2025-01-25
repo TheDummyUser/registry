@@ -25,7 +25,7 @@ func initConfig() Config {
 		Port:       getEnv("PORT", "8080"),
 		DBUser:     getEnv("DB_USER", "root"),
 		DBAddress:  fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),
-		DBName:     getEnv("DB_NAME", "justadb"),
+		DBName:     getEnv("DB_NAME", "testdb"),
 	}
 }
 

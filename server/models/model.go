@@ -11,16 +11,15 @@ type User struct {
 	IsAdmin  bool      `json:"is_admin"`                        // Maps to is_admin in users table
 }
 
-type Admin struct {
-	AdminID  int    `json:"admin_id"`
-	Username string `json:"username" validate:"required"`
-}
+
 
 type UserTimer struct {
 	ID        int       `json:"id"`                          // Maps to id in user_timers table
-	UserID    string    `json:"user_id" validate:"required"` // Maps to user_id in user_timers table
-	StartTime time.Time `json:"start_time"`                  // Maps to start_time in user_timers table
-	IsRunning bool      `json:"is_running"`                  // Maps to is_running in user_timers table
+	UserID    int       `json:"user_id" validate:"required"` // Maps to user_id in user_timers table (changed to int)
+	Date      time.Time `json:"date"`
+	StartTime time.Time `json:"start_time"` // Maps to start_time in user_timers table
+	EndTime   time.Time `json:"end_time"`
+	IsRunning bool      `json:"is_running"` // Maps to is_running in user_timers table
 }
 
 type Existinguser struct {

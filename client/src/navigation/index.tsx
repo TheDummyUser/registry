@@ -9,6 +9,7 @@ import useThemeStore from '~/store/themeStore';
 import { Theme } from '~/utils/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { fonts } from '~/utils/fonts';
+import { useUserStore } from '~/store/userStore';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -96,11 +97,12 @@ const AfterAutnStack = () => {
 const RootStack = () => {
   const t = Theme();
   const { theme } = useThemeStore();
-  const isLogin = true;
+  const { user } = useUserStore();
+  console.log(user);
   return (
     <NavigationContainer>
       <StatusBar backgroundColor={t.base00} style={theme == 'dark' ? 'light' : 'dark'} />
-      {isLogin ? <AfterAutnStack /> : <AuthStack />}
+      {user ? <AfterAutnStack /> : <AuthStack />}
     </NavigationContainer>
   );
 };

@@ -6,6 +6,9 @@ import { Theme } from '~/utils/colors';
 import CustomButton from '~/components/CustomButton';
 import { Controller, useForm } from 'react-hook-form';
 import { validationRules } from '~/utils/validationSchema';
+import { useMutation } from '@tanstack/react-query';
+import { loginApi } from '~/apiconfig/services';
+import { useUserStore } from '~/store/userStore';
 
 type FormData = {
   username: string;
@@ -24,10 +27,21 @@ const OnBoarding = () => {
     },
     mode: 'onSubmit',
   });
-
-  const onSubmit = (data: FormData) => console.log(data);
-
+  const { setUser } = useUserStore();
+  const onSubmit = (data: FormData) => mutation.mutate(data);
   const theme = Theme();
+
+  const mutation = useMutation({
+    mutationFn: loginApi,
+    onSuccess: (data) => {
+      setUser({
+        details: data.details,
+      });
+    },
+    onError: (data) => {
+      console.log('error', data);
+    },
+  });
   return (
     <MainContainer ph={15} center={true}>
       <View style={styles.headerContainer}>
@@ -49,7 +63,7 @@ const OnBoarding = () => {
               onChangeText={onChange}
               value={value}
               placeholderTextColor={theme.base05}
-              style={[styles.input, { backgroundColor: theme.base03 }]}
+              style={[styles.input, { backgroundColor: theme.base02, color: theme.base06 }]}
               keyboardType="email-address"
               autoCapitalize="none"
               accessibilityLabel="Email Input"
@@ -69,18 +83,18 @@ const OnBoarding = () => {
               onBlur={onBlur}
               value={value}
               placeholderTextColor={theme.base05}
-              style={[styles.input, { backgroundColor: theme.base03 }]}
+              style={[styles.input, { backgroundColor: theme.base02, color: theme.base06 }]}
               secureTextEntry
               accessibilityLabel="Password Input"
             />
           )}
         />
         {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
-
+        {mutation.error && <Text style={styles.errorText}>{mutation.error.message}</Text>}
         <CustomButton
           text="Login"
           disabled={!isValid}
-          bgColor={theme.base03}
+          bgColor={theme.base02}
           width="100%"
           height={40}
           fontsize={12}
@@ -111,7 +125,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 12,
     paddingHorizontal: 10,
-    fontFamily: fonts.Rcr,
+    fontFamily: fonts.Pr,
     fontSize: 13,
     marginBottom: 10,
   },

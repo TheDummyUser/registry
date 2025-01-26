@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface UserDetails {
+  id: any;
   email: string;
   is_admin: boolean;
   time: string;

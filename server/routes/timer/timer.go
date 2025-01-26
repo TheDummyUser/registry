@@ -47,12 +47,12 @@ func Timerstart(c *fiber.Ctx, db *sql.DB) error {
 	}
 
 	// Check if there is an active timer for the user
-	var existingTimer models.UserTimer
+	var activeTimer models.UserTimer
 	err := db.QueryRow(`
 		SELECT id, user_id, is_running, start_time
 		FROM user_timers
 		WHERE user_id = ? AND is_running = TRUE
-	`, body.UserID).Scan(&existingTimer.ID, &existingTimer.UserID, &existingTimer.IsRunning, &existingTimer.StartTime)
+	`, body.UserID).Scan(&activeTimer.ID, &activeTimer.UserID, &activeTimer.IsRunning, &activeTimer.StartTime)
 
 	if err == nil {
 		// Timer already running
@@ -60,7 +60,7 @@ func Timerstart(c *fiber.Ctx, db *sql.DB) error {
 			"error":  "A timer is already running for this user",
 			"status": fiber.StatusConflict,
 			"details": fiber.Map{
-				"start_time": existingTimer.StartTime,
+				"start_time": activeTimer.StartTime,
 			},
 		})
 	} else if err != sql.ErrNoRows {
@@ -71,7 +71,7 @@ func Timerstart(c *fiber.Ctx, db *sql.DB) error {
 		})
 	}
 
-	// Start a new timer
+	// Insert a new timer record
 	currentTime := time.Now()
 	currentDate := currentTime.Format("2006-01-02")
 
@@ -144,13 +144,15 @@ func Checktimer(c *fiber.Ctx, db *sql.DB) error {
 	seconds := int(elapsed.Seconds()) % 60
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message":    "Timer is active",
-		"status":     fiber.StatusOK,
-		"start_time": activeTimer.StartTime,
-		"elapsed": fiber.Map{
-			"hours":   hours,
-			"minutes": minutes,
-			"seconds": seconds,
+		"message": "Timer is active",
+		"status":  fiber.StatusOK,
+		"details": fiber.Map{
+			"start_time": activeTimer.StartTime,
+			"ellapsed": fiber.Map{
+				"hours":   hours,
+				"minutes": minutes,
+				"seconds": seconds,
+			},
 		},
 	})
 }

@@ -9,11 +9,7 @@ import { validationRules } from '~/utils/validationSchema';
 import { useMutation } from '@tanstack/react-query';
 import { loginApi } from '~/apiconfig/services';
 import { useUserStore } from '~/store/userStore';
-
-type FormData = {
-  username: string;
-  password: string;
-};
+import { FormData } from '~/utils/types';
 
 const OnBoarding = () => {
   const {
@@ -25,7 +21,7 @@ const OnBoarding = () => {
       username: '',
       password: '',
     },
-    mode: 'onSubmit',
+    mode: 'onBlur',
   });
   const { setUser } = useUserStore();
   const onSubmit = (data: FormData) => mutation.mutate(data);
@@ -46,7 +42,7 @@ const OnBoarding = () => {
     <MainContainer ph={15} center={true}>
       <View style={styles.headerContainer}>
         <Text style={[styles.textStyle, { color: theme.base07 }]}>Registry</Text>
-        <Text style={[styles.textStyle, { color: theme.base07, fontSize: 15 }]}>
+        <Text style={[styles.textStyle, { color: theme.base07, fontSize: 16 }]}>
           A one place destination for Attendance
         </Text>
       </View>
@@ -96,8 +92,8 @@ const OnBoarding = () => {
           disabled={!isValid}
           bgColor={theme.base02}
           width="100%"
-          height={40}
-          fontsize={12}
+          height={50}
+          fontsize={20}
           fontFam={fonts.pixeSansRegular}
           textColor={theme.base06}
           onPress={handleSubmit(onSubmit)}
@@ -114,7 +110,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   textStyle: {
-    fontSize: 22,
+    fontSize: 34,
     fontFamily: fonts.pixeSansBold,
   },
   formContainer: {
@@ -122,7 +118,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   input: {
-    height: 40,
+    height: 50,
     borderRadius: 12,
     paddingHorizontal: 10,
     fontFamily: fonts.Pr,

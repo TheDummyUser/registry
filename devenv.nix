@@ -35,6 +35,7 @@
       "x86_64"
     ];
     platformTools.version = "35.0.2";
+    ndk.enable = true;
     buildTools.version = [
       "34.0.0"
       "35.0.0"
@@ -45,7 +46,6 @@
     };
     sources.enable = false;
     systemImages.enable = true;
-    ndk.enable = true;
     googleAPIs.enable = true;
     googleTVAddOns.enable = true;
     extras = [ "extras;google;gcm" ];

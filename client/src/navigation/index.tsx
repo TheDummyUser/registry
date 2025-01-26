@@ -31,8 +31,14 @@ const AfterAuthBotArray = [
   {
     name: 'Homee',
     component: Home,
-    activeIcon: 'home',
-    inactiveIcon: 'home-outline',
+    activeIcon: 'planet',
+    inactiveIcon: 'planet-outline',
+  },
+  {
+    name: 'Homeee',
+    component: Home,
+    activeIcon: 'planet',
+    inactiveIcon: 'planet-outline',
   },
 ];
 
@@ -58,12 +64,14 @@ const AfterAutnBotTab = () => {
         },
         headerStyle: {
           backgroundColor: theme.base00,
-          borderBottomWidth: 1,
+          borderBottomWidth: 0.2,
+          borderColor: theme.base07,
         },
         tabBarStyle: {
           backgroundColor: theme.base00,
-          height: 40,
-          borderTopWidth: 0,
+          height: 45,
+          borderTopWidth: 0.2,
+          borderColor: theme.base07,
         },
       }}>
       {AfterAuthBotArray.map((route) => (
@@ -77,7 +85,7 @@ const AfterAutnBotTab = () => {
               <Ionicons
                 name={focused ? route.activeIcon : route.inactiveIcon}
                 size={20}
-                color={focused ? theme.base05 : theme.base0A}
+                color={focused ? theme.base05 : theme.base04}
               />
             ),
           }}

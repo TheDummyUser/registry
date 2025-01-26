@@ -1,29 +1,52 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useEffect } from 'react';
+import { Text, View } from 'react-native';
 import MainContainer from '~/components/Container';
-import { styles } from './styles';
 import CustomButton from '~/components/CustomButton';
 import { useUserStore } from '~/store/userStore';
 import { fonts } from '~/utils/fonts';
+import { styles } from './styles';
+import { useMutation } from '@tanstack/react-query';
+import { checkTimer } from '~/apiconfig/services';
+import { Theme } from '~/utils/colors';
 
 const Home = () => {
-  const { clearUser } = useUserStore();
+  const { user, clearUser } = useUserStore();
+  const theme = Theme();
+  const mutation = useMutation({
+    mutationFn: checkTimer,
+    onSuccess: (data) => {
+      console.log('sucess', data);
+    },
+    onError: (error) => {
+      console.log('error', error);
+    },
+  });
+
+  const onSubmit = (data: number) => {
+    mutation.mutate(data);
+  };
+
+  useEffect(() => {
+    mutation.mutate(user?.id);
+  }, []);
+
   return (
     <MainContainer ph={10}>
-      <View>
-        <Text style={styles.textStyle}>Home</Text>
+      <View style={{ borderWidth: 1, borderColor: 'red', height: 200 }}>
+        <Text style={[styles.textStyle, { fontFamily: fonts.Pr }]}>Timer</Text>
+        {mutation.error && <Text style={styles.errorText}>{mutation.error.message}</Text>}
       </View>
 
       <CustomButton
+        textColor="red"
         onPress={clearUser}
-        textColor="white"
-        bgColor="grey"
+        text="stop"
         fontFam={fonts.Pr}
-        fontsize={14}
+        fontsize={22}
         height={40}
         width={'100%'}
+        bgColor="green"
         disabled={false}
-        text="clear"
       />
     </MainContainer>
   );

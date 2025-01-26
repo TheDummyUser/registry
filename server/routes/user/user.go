@@ -88,8 +88,8 @@ func Login(c *fiber.Ctx, db *sql.DB) error {
 
 	// Query database for username and password
 	var existingUser models.Existinguser
-	err := db.QueryRow("SELECT username, password, email, time, is_admin FROM users WHERE username = ?", user.Username).
-		Scan(&existingUser.Username, &existingUser.Password, &existingUser.Email, &existingUser.Time, &existingUser.IsAdmin)
+	err := db.QueryRow("SELECT id, username, password, email, time, is_admin FROM users WHERE username = ?", user.Username).
+		Scan(&existingUser.ID, &existingUser.Username, &existingUser.Password, &existingUser.Email, &existingUser.Time, &existingUser.IsAdmin)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// Username not found
@@ -119,6 +119,7 @@ func Login(c *fiber.Ctx, db *sql.DB) error {
 		"message": "Login successful",
 		"status":  fiber.StatusOK,
 		"details": fiber.Map{
+			"id":       existingUser.ID,
 			"email":    existingUser.Email,
 			"username": existingUser.Username,
 			"is_admin": existingUser.IsAdmin,

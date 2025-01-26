@@ -1,8 +1,8 @@
-import { View, StyleSheet, ViewStyle } from 'react-native';
 import React, { ReactNode } from 'react';
-import { Theme } from '~/utils/colors';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { View, StyleSheet, ViewStyle } from 'react-native';
+
+import { Theme } from '~/utils/colors';
 interface ContainerProps {
   children: ReactNode;
   ph?: number;
@@ -11,7 +11,6 @@ interface ContainerProps {
 }
 
 const MainContainer: React.FC<ContainerProps> = ({ children, ph = 0, center = false, style }) => {
-  const insets = useSafeAreaInsets();
   const theme = Theme();
 
   return (
@@ -19,7 +18,6 @@ const MainContainer: React.FC<ContainerProps> = ({ children, ph = 0, center = fa
       style={[
         styles.container,
         {
-          paddingTop: insets.top,
           backgroundColor: theme.base00,
           paddingHorizontal: ph,
           justifyContent: center ? 'center' : undefined,

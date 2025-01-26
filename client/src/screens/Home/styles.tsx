@@ -7,4 +7,9 @@ export const styles = StyleSheet.create({
     fontSize: 23,
     fontFamily: fonts.pixeSansBold,
   },
+  errorText: {
+    color: 'red',
+    fontSize: 23,
+    fontFamily: fonts.pixeSansBold,
+  },
 });

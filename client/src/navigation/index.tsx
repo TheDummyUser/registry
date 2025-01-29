@@ -1,15 +1,18 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+
 import Home from '~/screens/Home';
 import OnBoarding from '~/screens/OnBoarding';
 import useThemeStore from '~/store/themeStore';
-import { Theme } from '~/utils/colors';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { fonts } from '~/utils/fonts';
 import { useUserStore } from '~/store/userStore';
+import { Theme } from '~/utils/colors';
+import { fonts } from '~/utils/fonts';
+import { useLogger } from '@react-navigation/devtools';
+import UserAttendence from '~/screens/UserAttendence';
+import AddUser from '~/screens/AddUser';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -18,27 +21,6 @@ const AuthStackArray = [
   {
     name: 'OnBoarding',
     component: OnBoarding,
-  },
-];
-
-const AfterAuthBotArray = [
-  {
-    name: 'Home',
-    component: Home,
-    activeIcon: 'home',
-    inactiveIcon: 'home-outline',
-  },
-  {
-    name: 'Homee',
-    component: Home,
-    activeIcon: 'planet',
-    inactiveIcon: 'planet-outline',
-  },
-  {
-    name: 'Homeee',
-    component: Home,
-    activeIcon: 'planet',
-    inactiveIcon: 'planet-outline',
   },
 ];
 
@@ -53,6 +35,34 @@ const AuthStack = () => {
 };
 
 const AfterAutnBotTab = () => {
+  const { user } = useUserStore();
+
+  const AfterAuthBotArray = [
+    {
+      name: 'Home',
+      component: Home,
+      activeIcon: 'home',
+      inactiveIcon: 'home-outline',
+    },
+    {
+      name: 'Attendence',
+      component: UserAttendence,
+      activeIcon: 'person',
+      inactiveIcon: 'person-outline',
+    },
+    // Only include "Add User" tab if user is admin
+    ...(user?.is_admin
+      ? [
+          {
+            name: 'Add User',
+            component: AddUser,
+            activeIcon: 'person-add',
+            inactiveIcon: 'person-add-outline',
+          },
+        ]
+      : []),
+  ];
+
   const theme = Theme();
   return (
     <Tab.Navigator
@@ -104,11 +114,13 @@ const AfterAutnStack = () => {
 
 const RootStack = () => {
   const t = Theme();
+  const navigationRef = useNavigationContainerRef();
+  useLogger(navigationRef);
   const { theme } = useThemeStore();
   const { user } = useUserStore();
-  console.log(user);
+
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <StatusBar backgroundColor={t.base00} style={theme == 'dark' ? 'light' : 'dark'} />
       {user ? <AfterAutnStack /> : <AuthStack />}
     </NavigationContainer>

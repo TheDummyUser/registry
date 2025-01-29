@@ -1,15 +1,16 @@
-import React from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
-import MainContainer from '~/components/Container';
-import { fonts } from '~/utils/fonts';
-import { Theme } from '~/utils/colors';
-import CustomButton from '~/components/CustomButton';
-import { Controller, useForm } from 'react-hook-form';
-import { validationRules } from '~/utils/validationSchema';
 import { useMutation } from '@tanstack/react-query';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
+
 import { loginApi } from '~/apiconfig/services';
+import MainContainer from '~/components/Container';
+import CustomButton from '~/components/CustomButton';
 import { useUserStore } from '~/store/userStore';
+import { Theme } from '~/utils/colors';
+import { fonts } from '~/utils/fonts';
 import { FormData } from '~/utils/types';
+import { validationRules } from '~/utils/validationSchema';
 
 const OnBoarding = () => {
   const {
@@ -24,7 +25,10 @@ const OnBoarding = () => {
     mode: 'onBlur',
   });
   const { setUser } = useUserStore();
-  const onSubmit = (data: FormData) => mutation.mutate(data);
+  const onSubmit = (data: FormData) => {
+    console.log('button Pressed', data);
+    mutation.mutate(data);
+  };
   const theme = Theme();
 
   const mutation = useMutation({
@@ -39,7 +43,7 @@ const OnBoarding = () => {
     },
   });
   return (
-    <MainContainer ph={15} center={true}>
+    <MainContainer ph={15} center={true} style={{}}>
       <View style={styles.headerContainer}>
         <Text style={[styles.textStyle, { color: theme.base07 }]}>Registry</Text>
         <Text style={[styles.textStyle, { color: theme.base07, fontSize: 16 }]}>

@@ -1,51 +1,56 @@
 import { FormData } from '~/utils/types';
 
+// Define a reusable base URL
+
+const isEmu = true;
+
+const BASE_URL = isEmu ? 'http://10.0.2.2:8080' : 'http://192.168.0.104:8080';
+
+const fetchApi = async (endpoint: string, options: RequestInit) => {
+  try {
+    const response = await fetch(`${BASE_URL}${endpoint}`, options);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(`Error: ${response.status} - ${errorData.message || 'Unknown error'}`);
+      throw new Error(errorData.message || 'Unknown error');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Fetch API Error:', error);
+    throw error;
+  }
+};
+
 export const loginApi = async (credentials: FormData) => {
-  const response = await fetch('http://10.0.2.2:8080/login', {
+  return fetchApi('/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials),
   });
-
-  if (!response.ok) {
-    throw new Error('Invalid username or password');
-  }
-
-  return response.json();
 };
 
 export const checkTimer = async (user_id: number) => {
-  const response = await fetch('http://10.0.2.2:8080/checktimer', {
+  return fetchApi('/checktimer', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ user_id }),
   });
-  if (!response.ok) {
-    throw new Error('No active timer found for this user');
-  }
-  return response.json();
 };
 
 export const startTimer = async (user_id: number) => {
-  const response = await fetch('http://10.0.2.2:8080/starttimer', {
+  return fetchApi('/starttimer', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ user_id }),
   });
-  if (!response.ok) {
-    throw new Error('timer already running bruh');
-  }
-  return response.json();
 };
 
 export const stopTimer = async (user_id: number) => {
-  const response = await fetch('http://10.0.2.2:8080/stoptimer', {
+  return fetchApi('/stoptimer', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ user_id }),
   });
-  if (!response.ok) {
-    throw new Error('No active timer found for this user');
-  }
-  return response.json();
 };

@@ -13,6 +13,7 @@
     bun
     nodejs
     yarn
+    scrcpy
   ];
 
   # https://devenv.sh/languages/

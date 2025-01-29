@@ -1,18 +1,18 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useLogger } from '@react-navigation/devtools';
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 
+import AddUser from '~/screens/AddUser';
 import Home from '~/screens/Home';
 import OnBoarding from '~/screens/OnBoarding';
+import UserAttendence from '~/screens/UserAttendence';
 import useThemeStore from '~/store/themeStore';
 import { useUserStore } from '~/store/userStore';
 import { Theme } from '~/utils/colors';
 import { fonts } from '~/utils/fonts';
-import { useLogger } from '@react-navigation/devtools';
-import UserAttendence from '~/screens/UserAttendence';
-import AddUser from '~/screens/AddUser';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

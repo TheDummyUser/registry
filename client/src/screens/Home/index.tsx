@@ -1,13 +1,15 @@
+import { useMutation } from '@tanstack/react-query';
 import React, { useState, useEffect } from 'react';
 import { Text, View } from 'react-native';
+
+import { styles } from './styles';
+
+import { checkTimer, startTimer, stopTimer } from '~/apiconfig/services';
 import MainContainer from '~/components/Container';
 import CustomButton from '~/components/CustomButton';
 import { useUserStore } from '~/store/userStore';
-import { fonts } from '~/utils/fonts';
-import { styles } from './styles';
-import { useMutation } from '@tanstack/react-query';
-import { checkTimer, startTimer, stopTimer } from '~/apiconfig/services';
 import { Theme } from '~/utils/colors';
+import { fonts } from '~/utils/fonts';
 
 const Home = () => {
   const { user } = useUserStore();
@@ -101,7 +103,7 @@ const Home = () => {
           fontFam={fonts.Pr}
           fontsize={24}
           height={50}
-          width={'100%'}
+          width="100%"
           bgColor={theme.base09}
           disabled={false}
           text="Check Timer"
@@ -114,7 +116,7 @@ const Home = () => {
           fontFam={fonts.Pr}
           fontsize={22}
           height={50}
-          width={'100%'}
+          width="100%"
           bgColor={theme.base08}
           disabled={false}
         />
@@ -126,7 +128,7 @@ const Home = () => {
           fontFam={fonts.Pr}
           fontsize={22}
           height={50}
-          width={'100%'}
+          width="100%"
           bgColor={theme.base08}
           disabled={false}
         />

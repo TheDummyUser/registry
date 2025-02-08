@@ -1,13 +1,8 @@
-import React, { ReactNode } from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 
 import { Theme } from '~/utils/colors';
-interface ContainerProps {
-  children: ReactNode;
-  ph?: number;
-  center?: boolean;
-  style?: ViewStyle;
-}
+import { ContainerProps } from '~/utils/types';
 
 const MainContainer: React.FC<ContainerProps> = ({ children, ph = 0, center = false, style }) => {
   const theme = Theme();

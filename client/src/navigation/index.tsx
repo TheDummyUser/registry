@@ -104,6 +104,7 @@ const AfterAutnBotTab = () => {
     </Tab.Navigator>
   );
 };
+
 const AfterAutnStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

@@ -1,14 +1,16 @@
 package routes
 
 import (
-	"database/sql"
-
-	"github.com/TheDummyUser/server/routes/timer"
-	"github.com/TheDummyUser/server/routes/user"
+	"github.com/TheDummyUser/registry/handlers"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
-func SetupRoutes(app *fiber.App, db *sql.DB) {
-	user.SetUpRoutes(app, db)
-	timer.SetUpRoutes(app, db)
+func SetupRoutes(app *fiber.App, db *gorm.DB) {
+	api := app.Group("/api")
+
+	// Pass db to handlers
+	api.Get("/users", func(c *fiber.Ctx) error {
+		return handlers.GetUsers(c, db)
+	})
 }

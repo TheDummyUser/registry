@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/TheDummyUser/registry/handlers"
+	"github.com/TheDummyUser/registry/routes/handlers"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
@@ -12,5 +12,12 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	// Pass db to handlers
 	api.Get("/users", func(c *fiber.Ctx) error {
 		return handlers.GetUsers(c, db)
+	})
+	api.Post("/signup", func(c *fiber.Ctx) error {
+		return handlers.Signup(c, db)
+	})
+
+	api.Post("/login", func(c *fiber.Ctx) error {
+		return handlers.Login(c, db)
 	})
 }

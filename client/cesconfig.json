@@ -1,5 +1,5 @@
 {
-  "cesVersion": "2.12.1",
+  "cesVersion": "2.12.2",
   "projectName": "client",
   "packages": [
     {
@@ -30,6 +30,6 @@
     "type": "Linux",
     "platform": "linux",
     "arch": "x64",
-    "kernelVersion": "6.12.10"
+    "kernelVersion": "6.12.13"
   }
 }

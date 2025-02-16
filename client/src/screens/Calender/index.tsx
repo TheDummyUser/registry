@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const AddUser = () => {
+const Calender = () => {
   return (
     <View style={styles.container}>
-      <Text>Text</Text>
+      <Text>Calender</Text>
     </View>
   );
 };
@@ -12,9 +12,7 @@ const AddUser = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 
-export default AddUser;
+export default Calender;

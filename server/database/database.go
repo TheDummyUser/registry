@@ -4,18 +4,25 @@ import (
 	"log"
 
 	"github.com/TheDummyUser/registry/config"
+	"github.com/TheDummyUser/registry/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-func ConnectDb() (*gorm.DB, error) { // Return (*gorm.DB, error)
+func ConnectDb() (*gorm.DB, error) {
 	dsn := config.Envs.GetDSN()
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Printf("Failed to connect to db: %v", err)
-		return nil, err // Return both nil and the error
+		return nil, err
 	}
 
-	return db, nil // Return the database instance and nil for error
+	err = db.AutoMigrate(&model.User{}, &model.Timer{})
+	if err != nil {
+		log.Fatalf("migration failed: %v", err)
+	}
+
+	log.Println("database sucessfully migrated")
+	return db, nil
 }

@@ -11,3 +11,7 @@ node_modules/
 /client/node_modules
 .android*
 /client/.expo
+/client/package-lock.json
+/client/yarn.lock
+/clinet/.bundle
+/client/__tests__

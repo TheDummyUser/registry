@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "registry",
-    "slug": "registry",
+    "name": "client",
+    "slug": "client",
     "version": "1.0.0",
     "web": {
       "favicon": "./assets/favicon.png"
@@ -9,42 +9,28 @@
     "experiments": {
       "tsconfigPaths": true
     },
-    "plugins": [
-      [
-        "expo-font",
-        {
-          "fonts": [
-            "./assets/fonts/PixelifySans-Bold.ttf",
-            "./assets/fonts/PixelifySans-SemiBold.ttf",
-            "./assets/fonts/PixelifySans-Medium.ttf",
-            "./assets/fonts/PixelifySans-Regular.ttf",
-            "./assets/fonts/Poppins-Bold.ttf",
-            "./assets/fonts/Poppins-SemiBold.ttf",
-            "./assets/fonts/Poppins-Medium.ttf",
-            "./assets/fonts/Poppins-Regular.ttf"
-          ]
-        }
-      ]
-    ],
+    "plugins": [],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "thedummyuser.registry.app"
+      "bundleIdentifier": "com.anonymous.client"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "thedummyuser.registry.app"
+      "package": "com.anonymous.client"
     }
   }
 }

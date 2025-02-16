@@ -20,4 +20,8 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	api.Post("/login", func(c *fiber.Ctx) error {
 		return handlers.Login(c, db)
 	})
+
+	api.Post("/checktimer", func(c *fiber.Ctx) error {
+		return handlers.CheckTimer(c, db)
+	})
 }

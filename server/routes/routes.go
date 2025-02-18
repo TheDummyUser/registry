@@ -24,4 +24,13 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	api.Post("/checktimer", func(c *fiber.Ctx) error {
 		return handlers.CheckTimer(c, db)
 	})
+
+	api.Post("/stoptimer", func(c *fiber.Ctx) error {
+		return handlers.EndTimer(c, db)
+	})
+
+	api.Post("/starttimer", func(c *fiber.Ctx) error {
+		return handlers.StartTimer(c, db)
+	})
+
 }

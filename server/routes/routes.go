@@ -33,4 +33,7 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 		return handlers.StartTimer(c, db)
 	})
 
+	api.Post("/leaves", func(c *fiber.Ctx) error {
+		return handlers.UserLeaveList(c, db)
+	})
 }

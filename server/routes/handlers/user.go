@@ -63,6 +63,7 @@ func Signup(c *fiber.Ctx, db *gorm.DB) error {
 		"dob":        user.DOB,
 		"created_at": user.CreatedAt,
 		"updated_at": user.UpdatedAt,
+		"is_admin":   user.IsAdmin,
 	}})
 }
 
@@ -94,5 +95,6 @@ func Login(c *fiber.Ctx, db *gorm.DB) error {
 		"dob":        user.DOB,
 		"created_at": user.CreatedAt,
 		"updated_at": user.UpdatedAt,
+		"is_admin":   user.IsAdmin,
 	}})
 }

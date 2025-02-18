@@ -13,5 +13,5 @@ node_modules/
 /client/.expo
 /client/package-lock.json
 /client/yarn.lock
-/clinet/.bundle
+/client/.bundle
 /client/__tests__

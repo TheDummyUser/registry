@@ -39,3 +39,21 @@ type Timer struct {
 	UpdatedAt time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
+
+type Leave struct {
+	ID        uint           `gorm:"primaryKey;autoIncrement" json:"id"`
+	UserID    uint           `gorm:"not null" json:"user_id"`
+	StartDate time.Time      `gorm:"not null" json:"start_date"`
+	EndDate   time.Time      `gorm:"not null" json:"end_date"`
+	Reason    string         `gorm:"size:255;not null" json:"reason"`
+	Status    string         `gorm:"size:50;not null" json:"status"`
+	CreatedAt time.Time      `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
+}
+
+type LeaveRequest struct {
+	StartDate string `json:"start_date" validate:"required"`
+	EndDate   string `json:"end_date" validate:"required"`
+	Reason    string `json:"reason" validate:"required"`
+}

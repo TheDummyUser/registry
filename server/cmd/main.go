@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/TheDummyUser/registry/cdm/api"
+	"github.com/TheDummyUser/registry/cmd/api"
 	"github.com/TheDummyUser/registry/database"
 )
 

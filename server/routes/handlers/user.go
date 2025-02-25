@@ -3,9 +3,11 @@ package handlers
 import (
 	"time"
 
+	"github.com/TheDummyUser/registry/config"
 	"github.com/TheDummyUser/registry/model"
 	"github.com/TheDummyUser/registry/utils"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
 )
 
@@ -88,6 +90,19 @@ func Login(c *fiber.Ctx, db *gorm.DB) error {
 		})
 	}
 
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	claims := token.Claims.(jwt.MapClaims)
+	claims["username"] = user.Username
+	claims["user_id"] = user.ID
+	claims["is_admin"] = user.IsAdmin
+	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+
+	t, err := token.SignedString([]byte(config.Coonfig("SECRET")))
+	if err != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "user login sucesssfully", "details": fiber.Map{
 		"id":         user.ID,
 		"username":   user.Username,
@@ -96,5 +111,6 @@ func Login(c *fiber.Ctx, db *gorm.DB) error {
 		"created_at": user.CreatedAt,
 		"updated_at": user.UpdatedAt,
 		"is_admin":   user.IsAdmin,
+		"token":      t,
 	}})
 }

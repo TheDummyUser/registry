@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -35,6 +37,15 @@ func getEnv(key, fallback string) string {
 		return value
 	}
 	return fallback
+}
+
+func Coonfig(key string) string {
+	// load .env file
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Print("Error loading .env file")
+	}
+	return os.Getenv(key)
 }
 
 func (c Config) GetDSN() string {

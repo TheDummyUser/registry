@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"sync"
 
 	"github.com/joho/godotenv"
 )
@@ -17,6 +18,10 @@ type Config struct {
 	DBPort     string
 	DBName     string
 }
+
+var (
+	loadEnvOnce sync.Once
+)
 
 var Envs = initConfig()
 
@@ -40,11 +45,13 @@ func getEnv(key, fallback string) string {
 }
 
 func Coonfig(key string) string {
-	// load .env file
-	err := godotenv.Load(".env")
-	if err != nil {
-		fmt.Print("Error loading .env file")
-	}
+	loadEnvOnce.Do(func() {
+		if err := godotenv.Load(); err != nil {
+			fmt.Println("Warning: Error loading .env file:", err)
+		} else {
+			fmt.Println("Successfully loaded .env file")
+		}
+	})
 	return os.Getenv(key)
 }
 

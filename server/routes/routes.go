@@ -32,17 +32,18 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	})
 
 	// User leave routes - available to all authenticated users
-	protected.Post("/leaves", func(c *fiber.Ctx) error {
-		return handlers.UserLeaveList(c, db)
-	})
+
 	protected.Post("/applyleaves", func(c *fiber.Ctx) error {
 		return handlers.ApplyLeave(c, db)
 	})
 
 	// Admin-only routes
-	adminRoutes := protected.Group("", middleware.AdminOnly(db))
+	adminRoutes := protected.Group("", middleware.AdminOnly())
 	adminRoutes.Get("/users", func(c *fiber.Ctx) error {
 		return handlers.GetUsers(c, db)
+	})
+	adminRoutes.Get("/leaves", func(c *fiber.Ctx) error {
+		return handlers.UserLeaveList(c, db)
 	})
 
 	// Add other admin-only routes here, for example:

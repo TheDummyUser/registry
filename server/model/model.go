@@ -7,15 +7,18 @@ import (
 )
 
 type User struct {
-	ID        uint           `gorm:"primaryKey;autoIncrement" json:"id"`
-	Username  string         `gorm:"size:50;unique;not null" json:"username"`
-	Email     string         `gorm:"size:100;unique;not null" json:"email"`
-	Password  string         `gorm:"not null" json:"-"`
-	DOB       time.Time      `gorm:"not null" json:"dob"`
-	IsAdmin   bool           `gorm:"default:false" json:"is_admin"`
-	CreatedAt time.Time      `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
+	ID              uint           `gorm:"primaryKey;autoIncrement" json:"id"`
+	Username        string         `gorm:"size:50;unique;not null" json:"username"`
+	Email           string         `gorm:"size:100;unique;not null" json:"email"`
+	Password        string         `gorm:"not null" json:"-"`
+	DOB             time.Time      `gorm:"not null" json:"dob"`
+	IsAdmin         bool           `gorm:"default:false" json:"is_admin"`
+	TotalLeaves     uint           `gorm:"default:0" json:"total_leaves"`
+	LeavesUsed      uint           `gorm:"default:0" json:"leaves_used"`
+	RemainingLeaves uint           `gorm:"default:0" json:"remaining_leaves"`
+	CreatedAt       time.Time      `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt       time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
+	DeletedAt       gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
 type SignupRequest struct {

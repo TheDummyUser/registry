@@ -1,29 +1,17 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/TheDummyUser/registry/model"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
-	"time"
 )
 
 func UserLeaveList(c *fiber.Ctx, db *gorm.DB) error {
-	type Tim struct {
-		UserID uint `json:"user_id"`
-	}
-
-	var inputs Tim
-	if err := c.BodyParser(&inputs); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
-	}
-
-	if inputs.UserID == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User ID is required"})
-	}
-
 	var leaves []model.Leave
 
-	if err := db.Where("user_id = ?", inputs.UserID).Find(&leaves).Error; err != nil {
+	if err := db.Find(&leaves).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Database error"})
 	}
 
@@ -41,31 +29,81 @@ func UserLeaveList(c *fiber.Ctx, db *gorm.DB) error {
 }
 
 func ApplyLeave(c *fiber.Ctx, db *gorm.DB) error {
-	type Tim struct {
-		UserID    uint      `json:"user_id"`
-		StartDate time.Time `json:"start_date"`
-		EndDate   time.Time `json:"end_date"`
-		Reason    string    `json:"reason"`
+	// Create a struct that matches the JSON structure but uses strings for dates
+	type LeaveRequest struct {
+		UserID    uint   `json:"user_id"`
+		StartDate string `json:"start_date"`
+		EndDate   string `json:"end_date"`
+		Reason    string `json:"reason"`
 	}
 
-	var inputs Tim
-	if err := c.BodyParser(&inputs); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
+	var request LeaveRequest
+	if err := c.BodyParser(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "Invalid input format",
+			"details": err.Error(),
+		})
 	}
 
-	if inputs.UserID == 0 {
+	if request.UserID == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User ID is required"})
 	}
 
-	if inputs.Reason == "" {
+	if request.Reason == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Reason is required"})
 	}
 
+	// Parse the date strings
+	startDate, err := time.Parse("2006-01-02", request.StartDate)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "Invalid start date format. Use YYYY-MM-DD.",
+			"details": err.Error(),
+		})
+	}
+
+	endDate, err := time.Parse("2006-01-02", request.EndDate)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "Invalid end date format. Use YYYY-MM-DD.",
+			"details": err.Error(),
+		})
+	}
+
+	// Calculate the number of leave days
+	days := endDate.Sub(startDate).Hours()/24 + 1
+	if days <= 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "End date must be after or equal to start date"})
+	}
+
+	var user model.User
+	if err := db.First(&user, request.UserID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
+	}
+
+	if user.RemainingLeaves < uint(days) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Not enough remaining leaves",
+			"details": fiber.Map{
+				"days_requested":   days,
+				"remaining_leaves": user.RemainingLeaves,
+			},
+		})
+	}
+
+	// Update user leave counts
+	user.LeavesUsed += uint(days)
+	user.RemainingLeaves -= uint(days)
+
+	if err := db.Save(&user).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update user leave counts"})
+	}
+
 	leave := model.Leave{
-		UserID:    inputs.UserID,
-		StartDate: inputs.StartDate,
-		EndDate:   inputs.EndDate,
-		Reason:    inputs.Reason,
+		UserID:    request.UserID,
+		StartDate: startDate,
+		EndDate:   endDate,
+		Reason:    request.Reason,
 	}
 
 	if err := db.Create(&leave).Error; err != nil {
@@ -74,6 +112,11 @@ func ApplyLeave(c *fiber.Ctx, db *gorm.DB) error {
 
 	return c.JSON(fiber.Map{
 		"message": "Leave applied successfully",
-		"details": &leave,
+		"details": fiber.Map{
+			"leave_id":         leave.ID,
+			"days_requested":   days,
+			"leaves_used":      user.LeavesUsed,
+			"remaining_leaves": user.RemainingLeaves,
+		},
 	})
 }

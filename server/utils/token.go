@@ -32,7 +32,7 @@ func GenerateTokens(userID uint, username string) (accessDetails, refreshDetails
 	accessExpiry := time.Now().Add(15 * time.Minute)
 	accessClaims["exp"] = accessExpiry.Unix()
 
-	accessTokenString, err := accessToken.SignedString([]byte(config.Coonfig("TOKEN")))
+	accessTokenString, err := accessToken.SignedString([]byte(config.Config("TOKEN")))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -46,7 +46,7 @@ func GenerateTokens(userID uint, username string) (accessDetails, refreshDetails
 	refreshExpiry := time.Now().Add(7 * 24 * time.Hour) // 7 days
 	refreshClaims["exp"] = refreshExpiry.Unix()
 
-	refreshTokenString, err := refreshToken.SignedString([]byte(config.Coonfig("TOKEN")))
+	refreshTokenString, err := refreshToken.SignedString([]byte(config.Config("TOKEN")))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -70,9 +70,9 @@ func GenerateTokens(userID uint, username string) (accessDetails, refreshDetails
 func ValidateToken(tokenString string, tokenType TokenType) (jwt.MapClaims, error) {
 	var secret string
 	if tokenType == AccessToken {
-		secret = config.Coonfig("TOKEN")
+		secret = config.Config("TOKEN")
 	} else {
-		secret = config.Coonfig("TOKEN")
+		secret = config.Config("TOKEN")
 	}
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {

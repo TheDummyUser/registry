@@ -3,13 +3,14 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime"
 	"sync"
 
 	"github.com/joho/godotenv"
 )
 
-type Config struct {
+type DbConfig struct {
 	PublicHost string
 	Port       string
 	DBUser     string
@@ -21,12 +22,45 @@ type Config struct {
 
 var (
 	loadEnvOnce sync.Once
+	Envs        DbConfig
 )
 
-var Envs = initConfig()
+func init() {
+	loadEnvOnce.Do(func() {
+		currentDir, err := os.Getwd()
+		if err != nil {
+			fmt.Println("Warning: Could not determine current directory:", err)
+		}
 
-func initConfig() Config {
-	return Config{
+		fmt.Println("Current working directory:", currentDir)
+
+		err = godotenv.Load(".env")
+		if err != nil {
+			fmt.Println("Trying to load .env from current directory...")
+
+			err = godotenv.Load(filepath.Join("..", ".env"))
+			if err != nil {
+				fmt.Println("Trying to load .env from parent directory...")
+
+				err = godotenv.Load(filepath.Join(currentDir, ".env"))
+				if err != nil {
+					fmt.Println("Warning: Could not load .env file from any location")
+					fmt.Println("Looked in:", currentDir, "and", filepath.Join(currentDir, "..", ".env"))
+				} else {
+					fmt.Println("Successfully loaded .env file from:", filepath.Join(currentDir, ".env"))
+				}
+			} else {
+				fmt.Println("Successfully loaded .env file from parent directory")
+			}
+		} else {
+			fmt.Println("Successfully loaded .env file from current directory")
+		}
+	})
+	Envs = initConfig()
+}
+
+func initConfig() DbConfig {
+	return DbConfig{
 		PublicHost: getEnv("PUBLIC_HOST", "http://localhost"),
 		Port:       getEnv("PORT", "8080"),
 		DBUser:     getEnv("DB_USER", "root"),
@@ -44,24 +78,15 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
-func Coonfig(key string) string {
-	loadEnvOnce.Do(func() {
-		if err := godotenv.Load(); err != nil {
-			fmt.Println("Warning: Error loading .env file:", err)
-		} else {
-			fmt.Println("Successfully loaded .env file")
-		}
-	})
+func Config(key string) string {
 	return os.Getenv(key)
 }
 
-func (c Config) GetDSN() string {
+func (c DbConfig) GetDSN() string {
 	if runtime.GOOS == "windows" {
-		// Windows: Use TCP
 		return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 			c.DBUser, c.DBPassword, c.DBHost, c.DBPort, c.DBName)
 	}
-	// Linux/NixOS: Use Unix socket
 	return fmt.Sprintf("%s@unix(/run/user/1000/devenv-1eb36ad/mysql.sock)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		c.DBUser, c.DBName)
 }

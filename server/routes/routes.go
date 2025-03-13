@@ -42,7 +42,7 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	adminRoutes.Get("/users", func(c *fiber.Ctx) error {
 		return handlers.GetUsers(c, db)
 	})
-	adminRoutes.Get("/leaves", func(c *fiber.Ctx) error {
+	adminRoutes.Get("/allleaves", func(c *fiber.Ctx) error {
 		return handlers.UserLeaveList(c, db)
 	})
 

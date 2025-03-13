@@ -97,7 +97,7 @@ func Login(c *fiber.Ctx, db *gorm.DB) error {
 	claims["user_id"] = user.ID
 	claims["is_admin"] = user.IsAdmin
 
-	t, err := token.SignedString([]byte(config.Coonfig("TOKEN")))
+	t, err := token.SignedString([]byte(config.Config("TOKEN")))
 	if err != nil {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}

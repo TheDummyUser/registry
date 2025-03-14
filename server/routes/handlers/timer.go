@@ -6,25 +6,18 @@ import (
 
 	"github.com/TheDummyUser/registry/model"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
 )
 
 func CheckTimer(c *fiber.Ctx, db *gorm.DB) error {
-	type Tim struct {
-		UserID uint `json:"user_id"`
-	}
 
-	var inputs Tim
-	if err := c.BodyParser(&inputs); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
-	}
-
-	if inputs.UserID == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User ID is required"})
-	}
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userID := uint(claims["user_id"].(float64))
 
 	var timer model.Timer
-	err := db.Where("user_id = ? AND end_time IS NULL", inputs.UserID).Order("start_time DESC").First(&timer).Error
+	err := db.Where("user_id = ? AND end_time IS NULL", userID).Order("start_time DESC").First(&timer).Error
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": "No active timer found"})
 	}
@@ -46,28 +39,19 @@ func CheckTimer(c *fiber.Ctx, db *gorm.DB) error {
 }
 
 func StartTimer(c *fiber.Ctx, db *gorm.DB) error {
-	type Tim struct {
-		UserID uint `json:"user_id"`
-	}
-
-	var inputs Tim
-	if err := c.BodyParser(&inputs); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
-	}
-
-	if inputs.UserID == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User ID is required"})
-	}
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userID := uint(claims["user_id"].(float64))
 
 	// Check if an active timer already exists
 	var existingTimer model.Timer
-	if err := db.Where("user_id = ? AND end_time IS NULL", inputs.UserID).First(&existingTimer).Error; err == nil {
+	if err := db.Where("user_id = ? AND end_time IS NULL", userID).First(&existingTimer).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"message": "An active timer already exists"})
 	}
 
 	// Create a new timer
 	newTimer := model.Timer{
-		UserID:    inputs.UserID,
+		UserID:    userID,
 		StartTime: time.Now(),
 	}
 	if err := db.Create(&newTimer).Error; err != nil {
@@ -91,22 +75,13 @@ func StartTimer(c *fiber.Ctx, db *gorm.DB) error {
 }
 
 func EndTimer(c *fiber.Ctx, db *gorm.DB) error {
-	type Tim struct {
-		UserID uint `json:"user_id"`
-	}
-
-	var inputs Tim
-	if err := c.BodyParser(&inputs); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
-	}
-
-	if inputs.UserID == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User ID is required"})
-	}
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userID := uint(claims["user_id"].(float64))
 
 	// Find the active timer
 	var timer model.Timer
-	err := db.Where("user_id = ? AND end_time IS NULL", inputs.UserID).Order("start_time DESC").First(&timer).Error
+	err := db.Where("user_id = ? AND end_time IS NULL", userID).Order("start_time DESC").First(&timer).Error
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": "No active timer found"})
 	}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/TheDummyUser/registry/model"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
 )
 
@@ -30,8 +31,11 @@ func UserLeaveList(c *fiber.Ctx, db *gorm.DB) error {
 
 func ApplyLeave(c *fiber.Ctx, db *gorm.DB) error {
 	// Create a struct that matches the JSON structure but uses strings for dates
+	u := c.Locals("user").(*jwt.Token)
+	claims := u.Claims.(jwt.MapClaims)
+	userID := uint(claims["user_id"].(float64))
+
 	type LeaveRequest struct {
-		UserID    uint   `json:"user_id"`
 		StartDate string `json:"start_date"`
 		EndDate   string `json:"end_date"`
 		Reason    string `json:"reason"`
@@ -45,9 +49,9 @@ func ApplyLeave(c *fiber.Ctx, db *gorm.DB) error {
 		})
 	}
 
-	if request.UserID == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User ID is required"})
-	}
+	// if request.UserID == 0 {
+	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User ID is required"})
+	// }
 
 	if request.Reason == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Reason is required"})
@@ -77,7 +81,7 @@ func ApplyLeave(c *fiber.Ctx, db *gorm.DB) error {
 	}
 
 	var user model.User
-	if err := db.First(&user, request.UserID).Error; err != nil {
+	if err := db.First(&user, userID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
 
@@ -100,7 +104,7 @@ func ApplyLeave(c *fiber.Ctx, db *gorm.DB) error {
 	}
 
 	leave := model.Leave{
-		UserID:    request.UserID,
+		UserID:    userID,
 		StartDate: startDate,
 		EndDate:   endDate,
 		Reason:    request.Reason,
@@ -117,6 +121,41 @@ func ApplyLeave(c *fiber.Ctx, db *gorm.DB) error {
 			"days_requested":   days,
 			"leaves_used":      user.LeavesUsed,
 			"remaining_leaves": user.RemainingLeaves,
+		},
+	})
+}
+
+func AcceptLeaves(c *fiber.Ctx, db *gorm.DB) error {
+	type LeaveRequestStatus struct {
+		UserID  uint   `json:"user_id"`
+		LeaveID uint   `json:"leave_id"`
+		Status  string `json:"status"`
+	}
+
+	var request LeaveRequestStatus
+
+	if err := c.BodyParser(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input format"})
+	}
+
+	var leave model.Leave
+	if err := db.First(&leave, request.LeaveID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Leave not found"})
+	}
+
+	if leave.Status != "pending" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Leave is already processed"})
+	}
+
+	err := db.Model(&leave).Update("status", request.Status).Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update leave status"})
+	}
+
+	return c.JSON(fiber.Map{"message": "Leave status updated successfully",
+		"details": fiber.Map{
+			"leave_id": leave.ID,
+			"status":   leave.Status,
 		},
 	})
 }

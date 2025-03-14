@@ -21,13 +21,13 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	protected := api.Group("", middleware.Protected())
 
 	// User timer routes - available to all authenticated users
-	protected.Post("/checktimer", func(c *fiber.Ctx) error {
+	protected.Get("/checktimer", func(c *fiber.Ctx) error {
 		return handlers.CheckTimer(c, db)
 	})
-	protected.Post("/starttimer", func(c *fiber.Ctx) error {
+	protected.Get("/starttimer", func(c *fiber.Ctx) error {
 		return handlers.StartTimer(c, db)
 	})
-	protected.Post("/stoptimer", func(c *fiber.Ctx) error {
+	protected.Get("/stoptimer", func(c *fiber.Ctx) error {
 		return handlers.EndTimer(c, db)
 	})
 
@@ -44,6 +44,9 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	})
 	adminRoutes.Get("/allleaves", func(c *fiber.Ctx) error {
 		return handlers.UserLeaveList(c, db)
+	})
+	adminRoutes.Post("/accept_leaves", func(c *fiber.Ctx) error {
+		return handlers.AcceptLeaves(c, db)
 	})
 
 	// Add other admin-only routes here, for example:

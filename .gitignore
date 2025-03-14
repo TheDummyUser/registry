@@ -5,6 +5,10 @@ devenv.local.nix
 # direnv
 .direnv
 
+
+#env
+/server/.env
+
 # pre-commit
 .pre-commit-config.yaml
 node_modules/

@@ -12,9 +12,21 @@ import (
 
 func CheckTimer(c *fiber.Ctx, db *gorm.DB) error {
 
-	user := c.Locals("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userID := uint(claims["user_id"].(float64))
+	userToken, ok := c.Locals("user").(*jwt.Token)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid user token"})
+	}
+
+	claims, ok := userToken.Claims.(jwt.MapClaims)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid token claims"})
+	}
+
+	userIDFloat, ok := claims["user_id"].(float64)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "user_id missing or invalid"})
+	}
+	userID := uint(userIDFloat)
 
 	var timer model.Timer
 	err := db.Where("user_id = ? AND end_time IS NULL", userID).Order("start_time DESC").First(&timer).Error
@@ -39,10 +51,21 @@ func CheckTimer(c *fiber.Ctx, db *gorm.DB) error {
 }
 
 func StartTimer(c *fiber.Ctx, db *gorm.DB) error {
-	user := c.Locals("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userID := uint(claims["user_id"].(float64))
+	userToken, ok := c.Locals("user").(*jwt.Token)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid user token"})
+	}
 
+	claims, ok := userToken.Claims.(jwt.MapClaims)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid token claims"})
+	}
+
+	userIDFloat, ok := claims["user_id"].(float64)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "user_id missing or invalid"})
+	}
+	userID := uint(userIDFloat)
 	// Check if an active timer already exists
 	var existingTimer model.Timer
 	if err := db.Where("user_id = ? AND end_time IS NULL", userID).First(&existingTimer).Error; err == nil {
@@ -75,10 +98,21 @@ func StartTimer(c *fiber.Ctx, db *gorm.DB) error {
 }
 
 func EndTimer(c *fiber.Ctx, db *gorm.DB) error {
-	user := c.Locals("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userID := uint(claims["user_id"].(float64))
+	userToken, ok := c.Locals("user").(*jwt.Token)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid user token"})
+	}
 
+	claims, ok := userToken.Claims.(jwt.MapClaims)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid token claims"})
+	}
+
+	userIDFloat, ok := claims["user_id"].(float64)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "user_id missing or invalid"})
+	}
+	userID := uint(userIDFloat)
 	// Find the active timer
 	var timer model.Timer
 	err := db.Where("user_id = ? AND end_time IS NULL", userID).Order("start_time DESC").First(&timer).Error

@@ -30,29 +30,29 @@ func UserLeaveList(c *fiber.Ctx, db *gorm.DB) error {
 }
 
 func ApplyLeave(c *fiber.Ctx, db *gorm.DB) error {
-	// Create a struct that matches the JSON structure but uses strings for dates
-	u := c.Locals("user").(*jwt.Token)
-	claims := u.Claims.(jwt.MapClaims)
-	userID := uint(claims["user_id"].(float64))
-
-	type LeaveRequest struct {
-		StartDate string `json:"start_date"`
-		EndDate   string `json:"end_date"`
-		Reason    string `json:"reason"`
+	userToken, ok := c.Locals("user").(*jwt.Token)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid user token"})
 	}
 
-	var request LeaveRequest
+	claims, ok := userToken.Claims.(jwt.MapClaims)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid token claims"})
+	}
+
+	userIDFloat, ok := claims["user_id"].(float64)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "user_id missing or invalid"})
+	}
+	userID := uint(userIDFloat)
+
+	var request model.LeaveRequest
 	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":   "Invalid input format",
 			"details": err.Error(),
 		})
 	}
-
-	// if request.UserID == 0 {
-	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User ID is required"})
-	// }
-
 	if request.Reason == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Reason is required"})
 	}

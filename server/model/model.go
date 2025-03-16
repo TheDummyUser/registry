@@ -13,7 +13,7 @@ type User struct {
 	Password        string         `gorm:"not null" json:"-"`
 	DOB             time.Time      `gorm:"not null" json:"dob"`
 	IsAdmin         bool           `gorm:"default:false" json:"is_admin"`
-	TotalLeaves     uint           `gorm:"default:0" json:"total_leaves"`
+	TotalLeaves     uint           `gorm:"default:12" json:"total_leaves"`
 	LeavesUsed      uint           `gorm:"default:0" json:"leaves_used"`
 	RemainingLeaves uint           `gorm:"default:0" json:"remaining_leaves"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime" json:"created_at"`
@@ -49,7 +49,7 @@ type Leave struct {
 	StartDate time.Time      `gorm:"not null" json:"start_date"`
 	EndDate   time.Time      `gorm:"not null" json:"end_date"`
 	Reason    string         `gorm:"size:255;not null" json:"reason"`
-	Status    string         `gorm:"size:50;not null" json:"status"`
+	Status    string         `gorm:"size:50;not null;default:'pending'" json:"status"`
 	CreatedAt time.Time      `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`

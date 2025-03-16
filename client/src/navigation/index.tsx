@@ -26,17 +26,6 @@ const TabNavItems = [
     activeIcon: 'calendar',
     inavtiveIcon: 'calendar-outline',
   },
-  {
-    id: 3,
-    name: 'Dudu',
-    component: () => {
-      <View>
-        <Text>dudu</Text>
-      </View>;
-    },
-    activeIcon: 'calendar',
-    inavtiveIcon: 'calendar-outline',
-  },
 ];
 
 const AuthStack = () => {
@@ -92,10 +81,10 @@ const BottomTabs = () => {
 };
 
 export default function Navigation() {
-  const isLogin = true;
+  const isLogin = false;
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <NavigationContainer>{isLogin ? <BottomTabs /> : <AuthStack />}</NavigationContainer>
     </>
   );

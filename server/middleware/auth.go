@@ -24,13 +24,21 @@ func jwtError(c *fiber.Ctx, err error) error {
 		JSON(fiber.Map{"status": "error", "message": "Invalid or expired JWT", "data": nil})
 }
 
+// In auth.go, modify AdminOnly
 func AdminOnly() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		user := c.Locals("user").(*jwt.Token)
-		claims := user.Claims.(jwt.MapClaims)
+		userToken, ok := c.Locals("user").(*jwt.Token)
+		if !ok {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid user token"})
+		}
 
-		// Check if user is admin
-		if !claims["is_admin"].(bool) {
+		claims, ok := userToken.Claims.(jwt.MapClaims)
+		if !ok {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid token claims"})
+		}
+
+		isAdmin, ok := claims["is_admin"].(bool)
+		if !ok || !isAdmin {
 			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 				"status":  "error",
 				"message": "Admin access required",

@@ -13,7 +13,7 @@ func NewServer(db *gorm.DB) *fiber.App {
 		cors.New(
 			cors.Config{
 				AllowOrigins: "*",
-				AllowHeaders: "Origin, Content-Type, Accept",
+				AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 				AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS",
 			},
 		),

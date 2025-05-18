@@ -21,3 +21,4 @@ node_modules/
 /client/__tests__
 /webclient/node_modules
 /server/bin
+/client/.vite

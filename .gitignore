@@ -19,3 +19,5 @@ node_modules/
 /client/yarn.lock
 /client/.bundle
 /client/__tests__
+/webclient/node_modules
+/server/bin

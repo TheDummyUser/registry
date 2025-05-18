@@ -17,9 +17,16 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 		return handlers.Signup(c, db)
 	})
 
+	api.Post("/refresh", func(c *fiber.Ctx) error {
+		return handlers.RefreshToken(c, db)
+	})
+
 	// Protected routes (require authentication)
 	protected := api.Group("", middleware.Protected())
 
+	protected.Get("/userdetails", func(c *fiber.Ctx) error {
+		return handlers.GetUserDetails(c, db)
+	})
 	// User timer routes - available to all authenticated users
 	protected.Get("/checktimer", func(c *fiber.Ctx) error {
 		return handlers.CheckTimer(c, db)

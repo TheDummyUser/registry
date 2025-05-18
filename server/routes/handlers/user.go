@@ -3,11 +3,9 @@ package handlers
 import (
 	"time"
 
-	"github.com/TheDummyUser/registry/config"
 	"github.com/TheDummyUser/registry/model"
 	"github.com/TheDummyUser/registry/utils"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
 )
 
@@ -78,38 +76,97 @@ func Login(c *fiber.Ctx, db *gorm.DB) error {
 
 	var user model.User
 
+	// Check if user exists
 	if err := db.Where("email = ?", input.Email).First(&user).Error; err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "invalid email or password",
+			"error": "Invalid email or password",
 		})
 	}
 
+	// Check password
 	if !utils.ComparePassword(user.Password, input.Password) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "invalid username or password",
+			"error": "Invalid email or password",
 		})
 	}
 
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	claims := token.Claims.(jwt.MapClaims)
-	claims["username"] = user.Username
-	claims["user_id"] = user.ID
-	claims["is_admin"] = user.IsAdmin
-
-	t, err := token.SignedString([]byte(config.Config("TOKEN")))
+	// Generate access and refresh tokens
+	accessToken, refreshToken, err := utils.GenerateTokens(user.ID, user.Username)
 	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to generate tokens",
+		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "user login sucesssfully", "details": fiber.Map{
-		"id":         user.ID,
-		"username":   user.Username,
-		"email":      user.Email,
-		"dob":        user.DOB,
-		"created_at": user.CreatedAt,
-		"updated_at": user.UpdatedAt,
-		"is_admin":   user.IsAdmin,
-		"token":      t,
-	}})
+	// Success response
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "User login successfully",
+		"details": fiber.Map{
+			"id":         user.ID,
+			"username":   user.Username,
+			"email":      user.Email,
+			"dob":        user.DOB,
+			"created_at": user.CreatedAt,
+			"updated_at": user.UpdatedAt,
+			"is_admin":   user.IsAdmin,
+			"tokens": fiber.Map{
+				"access_token":  accessToken.Token,
+				"refresh_token": refreshToken.Token,
+			},
+		},
+	})
+}
+
+func GetUserDetails(c *fiber.Ctx, db *gorm.DB) error {
+	userID, err := utils.GetUserIDFromToken(c)
+
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err, "status_code": fiber.StatusUnauthorized})
+	}
+
+	var user model.User
+	if err := db.First(&user, userID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
+	}
+
+	return c.JSON(fiber.Map{
+		"id":           user.ID,
+		"username":     user.Username,
+		"email":        user.Email,
+		"dob":          user.DOB,
+		"created_at":   user.CreatedAt,
+		"updated_at":   user.UpdatedAt,
+		"is_admin":     user.IsAdmin,
+		"total_leaves": user.TotalLeaves,
+		"used_leaves":  user.LeavesUsed,
+	})
+}
+
+func RefreshToken(c *fiber.Ctx, db *gorm.DB) error {
+	type RefreshRequest struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+
+	var req RefreshRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
+	}
+
+	claims, err := utils.ValidateToken(req.RefreshToken, utils.RefreshToken)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid or expired refresh token"})
+	}
+
+	userID := uint(claims["user_id"].(float64))
+	username := claims["username"].(string)
+
+	accessDetails, _, err := utils.GenerateTokens(userID, username)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to generate tokens"})
+	}
+
+	return c.JSON(fiber.Map{
+		"access_token": accessDetails.Token,
+		"expires_at":   accessDetails.ExpiresAt,
+	})
 }

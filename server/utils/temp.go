@@ -5,7 +5,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// GetUserIDFromToken extracts the user ID from the JWT token
 func GetUserIDFromToken(c *fiber.Ctx) (uint, error) {
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)

@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/TheDummyUser/registry/model"
+	"github.com/TheDummyUser/registry/utils"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
 )
 
@@ -30,22 +30,14 @@ func UserLeaveList(c *fiber.Ctx, db *gorm.DB) error {
 }
 
 func ApplyLeave(c *fiber.Ctx, db *gorm.DB) error {
-	userToken, ok := c.Locals("user").(*jwt.Token)
-	if !ok {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid user token"})
+	// Extract JWT token
+	userID, err := utils.GetUserIDFromToken(c)
+
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err, "status_code": fiber.StatusUnauthorized})
 	}
 
-	claims, ok := userToken.Claims.(jwt.MapClaims)
-	if !ok {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid token claims"})
-	}
-
-	userIDFloat, ok := claims["user_id"].(float64)
-	if !ok {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "user_id missing or invalid"})
-	}
-	userID := uint(userIDFloat)
-
+	// Parse request body
 	var request model.LeaveRequest
 	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -57,7 +49,7 @@ func ApplyLeave(c *fiber.Ctx, db *gorm.DB) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Reason is required"})
 	}
 
-	// Parse the date strings
+	// Parse dates
 	startDate, err := time.Parse("2006-01-02", request.StartDate)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -74,42 +66,43 @@ func ApplyLeave(c *fiber.Ctx, db *gorm.DB) error {
 		})
 	}
 
-	// Calculate the number of leave days
+	// Calculate leave days
 	days := endDate.Sub(startDate).Hours()/24 + 1
 	if days <= 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "End date must be after or equal to start date"})
 	}
 
+	// Fetch user from DB
 	var user model.User
 	if err := db.First(&user, userID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
 
-	if user.RemainingLeaves < uint(days) {
+	// Calculate remaining leaves dynamically
+	remainingLeaves := user.TotalLeaves - user.LeavesUsed
+	if remainingLeaves < uint(days) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Not enough remaining leaves",
 			"details": fiber.Map{
 				"days_requested":   days,
-				"remaining_leaves": user.RemainingLeaves,
+				"remaining_leaves": remainingLeaves,
 			},
 		})
 	}
 
-	// Update user leave counts
+	// Update user's leaves used
 	user.LeavesUsed += uint(days)
-	user.RemainingLeaves -= uint(days)
-
 	if err := db.Save(&user).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update user leave counts"})
 	}
 
+	// Create the leave record
 	leave := model.Leave{
 		UserID:    userID,
 		StartDate: startDate,
 		EndDate:   endDate,
 		Reason:    request.Reason,
 	}
-
 	if err := db.Create(&leave).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Leave could not be applied"})
 	}
@@ -120,7 +113,7 @@ func ApplyLeave(c *fiber.Ctx, db *gorm.DB) error {
 			"leave_id":         leave.ID,
 			"days_requested":   days,
 			"leaves_used":      user.LeavesUsed,
-			"remaining_leaves": user.RemainingLeaves,
+			"remaining_leaves": user.TotalLeaves - user.LeavesUsed,
 		},
 	})
 }

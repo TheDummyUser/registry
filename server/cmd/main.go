@@ -16,10 +16,7 @@ func main() {
 
 	cfg := api.NewServer(db)
 
-	cfg.Listen(":3000")
-
 	if err := cfg.Listen(":8080"); err != nil {
 		panic(err)
 	}
-
 }

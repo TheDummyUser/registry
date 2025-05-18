@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "../../ui/button";
 import {
   Sidebar,
   SidebarProvider,
@@ -7,11 +7,17 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { useTheme } from "@/context/theme.context";
-import { Calendar, Home, Sun, Moon, Computer } from "lucide-react";
+} from "../../ui/sidebar";
+import { useTheme } from "../../../context/theme.context";
+import {
+  Calendar,
+  Home,
+  Sun,
+  Moon,
+  Computer,
+} from "lucide-react/dist/lucide-react";
 
-import { Outlet, useLocation } from "react-router";
+import { Outlet, useLocation } from "react-router/dist/development/index.d.mts";
 
 const items = [
   {

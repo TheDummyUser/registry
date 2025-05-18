@@ -1,17 +1,17 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "../../../components/ui/button";
 import {
   Card,
   CardContent,
   CardTitle,
   CardDescription,
   CardHeader,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { checkTimer } from "@/services/Timer.service";
-import { PauseIcon, PlayIcon } from "lucide-react";
-import { useAuth } from "@/context/Auth.context";
-import { useQuery } from "@tanstack/react-query";
+} from "../../../components/ui/card";
+import { Label } from "../../../components/ui/label";
+import { Progress } from "../../../components/ui/progress";
+import { checkTimer } from "../../../services/Timer.service";
+import { PauseIcon, PlayIcon } from "lucide-react/dist/lucide-react";
+import { useAuth } from "../../../context/Auth.context";
+import { useQuery } from "@tanstack/react-query/build/modern";
 
 const Home = () => {
   const { user } = useAuth();

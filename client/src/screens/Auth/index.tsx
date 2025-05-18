@@ -1,19 +1,19 @@
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { cn } from "../../lib/utils";
+import { Button } from "../../components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { useNavigate } from "react-router";
-import { login } from "@/services/Auth.service";
-import { useMutation } from "@tanstack/react-query";
+} from "../../components/ui/card";
+import { useNavigate } from "react-router/dist/development/index.d.mts";
+import { login } from "../../services/Auth.service";
+import { useMutation } from "@tanstack/react-query/build/modern";
 import { useState } from "react";
-import { useAuth } from "@/context/Auth.context";
-import { toast } from "@/components/ui/sonner";
-import { InputComponent } from "@/components/custom/Input.custom";
+import { useAuth } from "../../context/Auth.context";
+import { toast } from "../../components/ui/sonner";
+import { InputComponent } from "../../components/custom/Input.custom";
 
 export function Auth({
   className,

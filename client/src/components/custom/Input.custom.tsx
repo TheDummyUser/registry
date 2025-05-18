@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react/dist/lucide-react";
 
 interface InputComponentProps {
   label: string;

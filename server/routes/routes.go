@@ -13,10 +13,9 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	api.Post("/login", func(c *fiber.Ctx) error {
 		return handlers.Login(c, db)
 	})
-	api.Post("/signup", func(c *fiber.Ctx) error {
-		return handlers.Signup(c, db)
+	api.Post("/logout", func(c *fiber.Ctx) error {
+		return handlers.Logout(c, db)
 	})
-
 	api.Post("/refresh", func(c *fiber.Ctx) error {
 		return handlers.RefreshToken(c, db)
 	})
@@ -45,8 +44,13 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 
 	// Admin-only routes
 	adminRoutes := protected.Group("", middleware.AdminOnly())
+
 	adminRoutes.Get("/users", func(c *fiber.Ctx) error {
 		return handlers.GetUsers(c, db)
+	})
+
+	adminRoutes.Post("/signup", func(c *fiber.Ctx) error {
+		return handlers.Signup(c, db)
 	})
 	adminRoutes.Get("/allleaves", func(c *fiber.Ctx) error {
 		return handlers.UserLeaveList(c, db)

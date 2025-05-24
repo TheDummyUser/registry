@@ -6,6 +6,7 @@ export const api_urls = {
   login: "login",
   signup: "signup",
   refresh: "refresh",
+  logout: "logout",
 
   // user
   getUserDetails: "userdetails",

@@ -1,47 +1,34 @@
-import { createContext, useContext, useState, ReactNode } from "react";
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  dob: string;
-  is_admin: boolean;
-  tokens: {
-    access_token: string;
-    refresh_token: string;
-  };
-  created_at: string;
-  updated_at: string;
-}
+import type { UserDetails } from "@/utils/api.respose.types";
+import { createContext, useContext, useState, type ReactNode } from "react";
 
 interface AuthContextType {
-  user: User | null;
-  login: (userData: User) => void;
+  user: UserDetails | null;
+  login: (userData: UserDetails) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(() => {
+  const [user, setUser] = useState<UserDetails | null>(() => {
     if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user");
+      const storedUser = sessionStorage.getItem("user");
       return storedUser ? JSON.parse(storedUser) : null;
     }
     return null;
   });
 
-  const login = (userData: User) => {
+  const login = (userData: UserDetails) => {
     setUser(userData);
     if (typeof window !== "undefined") {
-      localStorage.setItem("user", JSON.stringify(userData));
+      sessionStorage.setItem("user", JSON.stringify(userData));
     }
   };
 
   const logout = () => {
     setUser(null);
     if (typeof window !== "undefined") {
-      localStorage.removeItem("user");
+      sessionStorage.removeItem("user");
     }
   };
 

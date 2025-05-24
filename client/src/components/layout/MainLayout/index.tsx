@@ -9,15 +9,13 @@ import {
   SidebarTrigger,
 } from "../../ui/sidebar";
 import { useTheme } from "../../../context/theme.context";
-import {
-  Calendar,
-  Home,
-  Sun,
-  Moon,
-  Computer,
-} from "lucide-react/dist/lucide-react";
+import { Calendar, Home, Sun, Moon, Computer, LogOut } from "lucide-react";
 
-import { Outlet, useLocation } from "react-router/dist/development/index.d.mts";
+import { Outlet } from "react-router";
+import { useAuth } from "@/context/Auth.context";
+import { useMutation } from "@tanstack/react-query";
+import { logout } from "@/services/Auth.service";
+import { toast } from "sonner";
 
 const items = [
   {
@@ -33,31 +31,48 @@ const items = [
 ];
 
 const MainLayout = () => {
-  const location = useLocation();
   const { setTheme } = useTheme();
+  const { logout: authLogut, user } = useAuth();
+
+  const { mutate, isSuccess, error, data } = useMutation({
+    mutationFn: () => logout(user?.tokens?.refresh_token || ""),
+  });
+
+  const handleLogout = () => {
+    mutate();
+  };
+
+  console.log("logout error", error);
+
+  if (isSuccess) {
+    toast(data?.message);
+    setTimeout(() => {
+      authLogut();
+    }, 1000);
+  }
+
   return (
     <div className="flex h-screen w-screen overflow-hidden">
       <SidebarProvider defaultOpen={true}>
         <Sidebar className="z-20">
-          <SidebarContent className="w-64 h-full flex flex-col border-r border-zinc-50">
-            <div className="p-4 border-b border-zinc-50">
-              <h2 className="text-lg font-semibold">Company name... or logo</h2>
+          <SidebarContent className="w-64 h-full flex flex-col">
+            <div className="p-4 flex items-center justify-center">
+              <h2 className="text-base">Company name... or logo</h2>
             </div>
 
             {/* Scrollable menu container */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar">
-              <SidebarMenu className="p-2">
+            <div className="flex-1 overflow-y-auto">
+              <SidebarMenu className="px-4">
                 {items.map((item) => {
-                  const isActive = location.pathname === item.url;
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
-                        <Button className="w-full">
+                        <p className="flex p-5">
                           <item.icon size={20} />
                           <a href={item.url}>
                             <span>{item.title}</span>
                           </a>
-                        </Button>
+                        </p>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
@@ -68,22 +83,24 @@ const MainLayout = () => {
         </Sidebar>
 
         <div className="flex-1 overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-zinc-50 flex items-center justify-between">
+          <div className="p-4 flex items-center justify-between">
             <p>
-              <SidebarTrigger variant="outline" />
-              <span className="ml-4 font-medium">Dashboard</span>
+              <SidebarTrigger variant="default" />
             </p>
 
-            <p className="">
+            <p className="flex space-x-5">
+              <Button onClick={handleLogout}>
+                <LogOut className="h-4 w-4" />
+              </Button>
               <Button
-                variant="outline"
+                variant="default"
                 onClick={() => {
                   setTheme((prev) => {
                     if (prev === "light") return "dark";
                     return "light";
                   });
                 }}
-                className="flex items-center gap-2"
+                className=""
               >
                 <Sun className="h-4 w-4" />
                 <Moon className="h-4 w-4 hidden" />
@@ -93,36 +110,12 @@ const MainLayout = () => {
           </div>
 
           <div className="flex-1 p-6 overflow-auto">
-            <div className=" rounded-lg p-6 h-full shadow-sm">
+            <div className="rounded-[1.5rem] p-6 h-full border">
               <Outlet />
             </div>
           </div>
         </div>
       </SidebarProvider>
-
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: rgba(255, 255, 255, 0.2);
-          border-radius: 20px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .custom-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-        }
-      `}</style>
     </div>
   );
 };

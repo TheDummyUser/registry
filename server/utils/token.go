@@ -22,13 +22,15 @@ type TokenDetails struct {
 }
 
 // GenerateTokens creates both access and refresh tokens for a user
-func GenerateTokens(userID uint, username string) (accessDetails, refreshDetails *TokenDetails, err error) {
+func GenerateTokens(userID uint, username string, role string, teamID uint) (accessDetails, refreshDetails *TokenDetails, err error) {
 	// Generate Access Token
 	accessToken := jwt.New(jwt.SigningMethodHS256)
 	accessClaims := accessToken.Claims.(jwt.MapClaims)
 	accessClaims["user_id"] = userID
 	accessClaims["username"] = username
 	accessClaims["type"] = string(AccessToken)
+	accessClaims["role"] = role
+	accessClaims["team_id"] = teamID
 	accessExpiry := time.Now().Add(15 * time.Minute)
 	accessClaims["exp"] = accessExpiry.Unix()
 
@@ -43,6 +45,8 @@ func GenerateTokens(userID uint, username string) (accessDetails, refreshDetails
 	refreshClaims["user_id"] = userID
 	refreshClaims["username"] = username
 	refreshClaims["type"] = string(RefreshToken)
+	refreshClaims["role"] = role
+	refreshClaims["team_id"] = teamID
 	refreshExpiry := time.Now().Add(7 * 24 * time.Hour) // 7 days
 	refreshClaims["exp"] = refreshExpiry.Unix()
 

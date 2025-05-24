@@ -67,7 +67,7 @@ func initConfig() DbConfig {
 		DBPassword: getEnv("DB_PASSWORD", ""),
 		DBHost:     getEnv("DB_HOST", "127.0.0.1"),
 		DBPort:     getEnv("DB_PORT", "3306"),
-		DBName:     getEnv("DB_NAME", "test123db"),
+		DBName:     getEnv("DB_NAME", "devRegisty"),
 	}
 }
 

@@ -1,19 +1,19 @@
-import { cn } from "../../lib/utils";
-import { Button } from "../../components/ui/button";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
-import { useNavigate } from "react-router/dist/development/index.d.mts";
-import { login } from "../../services/Auth.service";
-import { useMutation } from "@tanstack/react-query/build/modern";
+} from "@/components/ui/card";
+import { useNavigate } from "react-router";
+import { login } from "@/services/Auth.service";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { useAuth } from "../../context/Auth.context";
-import { toast } from "../../components/ui/sonner";
-import { InputComponent } from "../../components/custom/Input.custom";
+import { useAuth } from "@/context/Auth.context";
+import { toast } from "@/components/ui/sonner";
+import { InputComponent } from "@/components/custom/Input.custom";
 
 export function Auth({
   className,
@@ -51,11 +51,15 @@ export function Auth({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 items-center justify-center h-screen",
+        "flex flex-col gap-6 items-center justify-center h-screen cursor-pointer",
         className,
       )}
       {...props}
     >
+      <div className="absolute top-[100px] left-[100px] space-y-4">
+        <p className="text-7xl">Registry</p>
+        <p className="text-3xl">a single place for all your hrms needs...</p>
+      </div>
       <Card className="w-[500px] h-auto flex flex-col justify-around">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>

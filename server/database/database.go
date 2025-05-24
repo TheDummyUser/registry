@@ -18,7 +18,7 @@ func ConnectDb() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(&model.User{}, &model.Timer{}, &model.Leave{})
+	err = db.AutoMigrate(&model.User{}, &model.Timer{}, &model.Leave{}, &model.Team{}, &model.RefreshToken{})
 	if err != nil {
 		log.Fatalf("migration failed: %v", err)
 	}

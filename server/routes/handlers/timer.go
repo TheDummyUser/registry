@@ -21,7 +21,7 @@ func CheckTimer(c *fiber.Ctx, db *gorm.DB) error {
 	var timer model.Timer
 	err = db.Where("user_id = ? AND end_time IS NULL", userID).Order("start_time DESC").First(&timer).Error
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": "No active timer found"})
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "No active timer found", "status": fiber.StatusOK})
 	}
 
 	duration := time.Since(timer.StartTime)

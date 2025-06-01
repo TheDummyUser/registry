@@ -7,7 +7,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
 import {
   useCheckTimerQuery,
   useLazyStartTimerQuery,
@@ -37,7 +36,7 @@ function RouteComponent() {
   console.log("start timer error", startTimerError);
 
   const onPressStart = () => {
-    if (progress.trim()) {
+    if (progress) {
       stopTimer({});
     } else {
       startTimer({});
@@ -53,7 +52,7 @@ function RouteComponent() {
         </CardHeader>
         <CardContent className="flex justify-between items-center">
           <div className="w-[80%] h-[50px] justify-between flex flex-col">
-            <Progress className="w-full" value={progress} />
+            <Progress className="w-full" value={+progress} />
             <CardDescription>
               This is your progress Broh!: {progress}
             </CardDescription>

@@ -44,7 +44,7 @@ func CheckTimer(c *fiber.Ctx, db *gorm.DB) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"message": "Timer started successfully",
+		"message": "Timer Running",
 		"details": fiber.Map{
 			"hours":                timeFormatted,
 			"timer_started":        timer.StartTime.Format(time.RFC3339),

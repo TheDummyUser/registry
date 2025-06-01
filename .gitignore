@@ -22,3 +22,4 @@ node_modules/
 /webclient/node_modules
 /server/bin
 /client/.vite
+/client/.env
